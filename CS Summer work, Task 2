@@ -1,0 +1,85 @@
+/*Write a program to:
+• Ask the user to input
+– The name of a product
+– Its cost in pounds
+– The program should keep asking for inputs until the user types “None”
+
+• The program should then output:
+– The name and price of the most expensive item
+– The name and price of the least expensive item
+– The average price of the items
+– The total cost of the items
+
+• Items over £50 get a 5% discount
+• VAT is added at the end at 20%
+• The program should validate any inputs
+*/
+double maxCost = 0;
+string maxName = string.Empty;
+double minCost = 0;
+string minName = string.Empty;
+double totalCost = 0;
+int count = 0;
+double avCost = 0;
+
+bool done = false;
+string productName = string.Empty;
+double productCost = 0;
+Console.WriteLine("Type 'None' or leave an empty string in the name section to end your list.\nProducts above £50 get a 5% discount, and 20% VAT is added at the end.");
+while (!done)
+{
+    Console.Write("Enter the name of the product: ");
+    productName = Console.ReadLine();
+    if (productName == "None" || productName == string.Empty)
+    {
+        done = true;
+        Console.WriteLine("End of list\n");
+    }
+    else
+    {
+        Console.Write("Enter the cost of the product: ");
+        try
+        {
+            productCost = Convert.ToDouble(Console.ReadLine());
+
+            if (productCost > 50.0)
+                productCost = productCost * 0.95;
+
+            if (count == 0)
+            {
+                maxName = productName;
+                maxCost = productCost;
+                minName = productName;
+                minCost = productCost;
+                count = 1;
+            }
+            else
+            {
+                if (productCost > maxCost)
+                {
+                    maxCost = productCost;
+                    maxName = productName;
+                }
+                else if (productCost < minCost)
+                {
+                    minCost = productCost;
+                    minName = productName;
+                }
+                count = count + 1;
+
+            }
+            totalCost = totalCost + productCost;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("\n" + ex.Message + "\nPlease try entering the item again\n");
+        }
+    }
+}
+totalCost = totalCost * 1.2;
+avCost = totalCost / count;
+Console.WriteLine("Most expensive item   : " + Convert.ToString(maxName) + " at " + Convert.ToString(maxCost));
+Console.WriteLine("Least expensive item  : " + Convert.ToString(minName) + " at " + Convert.ToString(minCost));
+Console.WriteLine("Total cost before VAT : " + Convert.ToString(totalCost / 1.2));
+Console.WriteLine("Total cost after VAT  : " + Convert.ToString(totalCost));
+Console.WriteLine("Average item cost     : " + Convert.ToString(avCost));
