@@ -1,0 +1,132 @@
+/*
+Write a program to:
+• Analyse a passage of text from a file and then counts:       - File reading done
+– How many words are in the file                               - Done
+– The average length of the words in that file                 - Done
+– How many times each word occurs in that file                 - Done
+– How many words start with each letter of the alphabet?       - Done
+– What are the most commonly used words in the file            - Done
+
+Note: CAPITALS DON'T SEEM TO MATTER
+
+// max 2_147_483_647 chars for string length, longest book in the world is "A la recherche du temps perdu" by Marcel Proust, at 9_609_000
+// No checks needed to trim length, since this is ~223.49 times smaller than max
+*/
+
+// reads input of file, appends to a string. Each line is added consecutively with a gap to sperate them.
+
+string text = string.Empty;
+using (StreamReader reader = File.OpenText("InputText2.txt"))
+{
+    while (!reader.EndOfStream)
+    {
+        text = text + reader.ReadLine() + " ";
+    }
+}
+
+
+// Creates a new string where I will append only the letters and numbers, 
+// since only they add to the word / letter count (yes I'm including numbers, counting them as a single word here)
+string textClean = string.Empty;
+text = text.ToLower();
+foreach (char _char in text)
+{
+    if (" 1234567890abcdefghijklmnopqrstuvwxyz".Contains(_char))
+    {
+        textClean += _char;
+    }
+    else if (_char == '-')
+    {
+        textClean += " ";
+    }
+}
+
+//removes any duplicate spaces in case they are present
+var finalArray = (Array)textClean.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+// Calculates word count, then average letters per word as a double
+int wordCount = finalArray.Length;
+double letterCount = 0.0;
+foreach (string item in finalArray)
+{
+    letterCount += item.Length;
+}
+double avLength = letterCount / wordCount;
+
+string alphabet = "abcdefghijklmnopqrstuvwxyz";
+int[] startLetterCount = new int[26];
+Dictionary<string, int> wordCounter = new Dictionary<string, int>();
+Array.Fill(startLetterCount, 0);
+Array.Sort(finalArray);
+
+// Loops though and makes a count of how many words begin with each letter, with array index and string index of alphabet being corresponding
+foreach (string word in finalArray)
+{
+    // 2 seperate things happen on each loop:
+    // First, the letter the word starts with is noted
+    startLetterCount[alphabet.IndexOf(word[0])]++;
+
+    // Then, the word is added to an index with it's no. uses
+    bool added = wordCounter.TryAdd(word, 1);
+    if (!added)
+        wordCounter[word]++;
+}
+
+string[] mostWords = { "N/A", "N/A", "N/A" };
+int[] mostWordsCount = { 0, 0, 0 };
+
+//loops through dictionary and adds the 3 most used words and their use numbers into the correct arrays
+//the arrays are set up with a failsafe in case there are less than 3 used words
+foreach (var pair in wordCounter)
+{
+    if (pair.Value > mostWordsCount[0])
+    {
+        //need to shift list down by 1 as I edit it
+        mostWords[2] = mostWords[1];
+        mostWordsCount[2] = mostWordsCount[1];
+        mostWords[1] = mostWords[0];
+        mostWordsCount[1] = mostWordsCount[0];
+
+        mostWords[0] = pair.Key;
+        mostWordsCount[0] = pair.Value;
+    }
+    else if (pair.Value > mostWordsCount[1])
+    {
+        //need to shift pos 1 down to 2 before insertion
+        mostWords[2] = mostWords[1];
+        mostWordsCount[2] = mostWordsCount[1];
+
+        mostWords[1] = pair.Key;
+        mostWordsCount[1] = pair.Value;
+    }
+    else if (pair.Value > mostWordsCount[2])
+    {
+        mostWords[2] = pair.Key;
+        mostWordsCount[2] = pair.Value;
+    }
+}
+
+
+// Writing useful info to the console
+Console.WriteLine($"There are {wordCount} words in the given text");
+Console.WriteLine($"The average word length is {avLength} letters\n");
+
+foreach (var pair in wordCounter)
+{
+    if (pair.Value == 1)
+        Console.WriteLine($"{pair.Key} is used 1 time");
+    else
+        Console.WriteLine($"{pair.Key} is used {pair.Value} times");
+}
+Console.WriteLine("");
+for (int i = 0; i<startLetterCount.Length; i++)
+{
+    if (startLetterCount[i] == 0)
+        continue;
+    Console.WriteLine($"Words beginning with {alphabet[i]}: {startLetterCount[i]}");
+}
+    
+
+Console.WriteLine($"\n1st most used word is \"{mostWords[0]}\" with {mostWordsCount[0]} use(s)");
+Console.WriteLine($"2nd most used word is \"{mostWords[1]}\" with {mostWordsCount[1]} use(s)");
+Console.WriteLine($"3rd most used word is \"{mostWords[2]}\" with {mostWordsCount[2]} use(s)");
