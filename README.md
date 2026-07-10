@@ -1,3 +1,10 @@
+Idk what the Pound signs do (hashtag, haha) but maybe they're just comments. Is this literaly just a nice text editor, or can it take languages
+and highlight proper syntax, variables, for loops etc ?
+  Also I can indent stuff
+    INDENT SUPREMACY!!!!!
+
+
+
 # First-Test
 This is for practice. Will probably dump my terrible C# code here from school
 
