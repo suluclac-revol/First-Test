@@ -1,0 +1,95 @@
+/* Instructions;
+   Write a program to:
+• Ask the user to input
+– Their first name                  ; Yes
+– Their surname                     ; Yes
+– A date, in the format DD/MM/YYYY  ; Yes
+• The program should then output a customer ID as follows:
+– The date in the format YYYYMMDD, then the first three letters of the surname,
+then the first initial, then the length of their first name. All letters should be in
+capitals                                                         ; Yes
+– For example, John Smith, 27/05/2017 would give 20170527SMIJ4 ; Yes
+• The program should validate any inputs and keep asking for inputs until the user enters
+correct details or types “quit” at any point   ; Yes
+*/
+static string MakePwd()
+{
+    bool valid = false;
+    string toQuit = "no";
+    string pwd = "";
+    string fName = "";
+    string sName = "";
+    string date = "";
+    while (!valid)
+    {
+        //Getting input, set up for loop exit
+        valid = true;
+        Console.Write("Enter your first name    : ");
+        fName = Console.ReadLine().ToUpper();
+        Console.Write("Enter your second name   : ");
+        sName = Console.ReadLine().ToUpper();
+        Console.Write("Enter a date (DD/MM/YYYY): ");
+        date = Console.ReadLine();
+        //Validation of data entered, quit check
+        if (fName == "QUIT" || sName == "QUIT" || date == "QUIT")
+        {
+            Console.WriteLine("Ending program (You entered \"quit\")");
+            toQuit = "yes";
+        }
+        else
+        {
+            if (fName.Length < 1)
+            {
+                Console.WriteLine("First name must be at least 1 letter");
+                valid = false;
+            }
+            if (sName.Length < 3)
+            {
+                Console.WriteLine("Surname is too short");
+                valid = false;
+            }
+            if (date.Length < 10 || date.Length > 10)
+            {
+                Console.WriteLine("Date is not the correct length, remember to include leading zeros");
+                valid = false;
+            }
+            int errorCount = 0;
+            for (int i = 0; i < date.Length; i++)
+                if ((date[i] >= 'a' && date[i] <= 'z') || (date[i] >= 'A' && date[i] <= 'Z'))
+                    errorCount++;
+            if (errorCount > 0)
+            {
+                Console.WriteLine("Date should not contain letters, only numbers and slashes");
+                valid = false;
+            }
+            Console.WriteLine(" "); // For formatting, i.e. separation between entering data and the rest
+        }
+
+    }
+    if (toQuit.Length == 3)
+        pwd = "quit";
+    else
+        pwd = date.Substring(6) + date.Substring(3, 2) + date.Substring(0, 2) + sName.Substring(0, 3) + fName[0] + fName.Length.ToString();
+    return pwd;
+}
+//main loop
+bool run = true;
+string ans = "";
+string password = "";
+while (run)
+{
+    Console.WriteLine("Would you like to make a password? ('Yes' or 'No' / 'Quit')");
+    ans = Console.ReadLine().ToLower();
+
+    if (ans == "yes")
+    {
+        password = MakePwd();
+        if (password == "quit") { Console.WriteLine("You quit out before making a passsword"); }
+        else { Console.WriteLine("Your password is " + password); }
+    }
+    else if (ans == "no" || ans == "quit")
+    {
+        run = false;
+        Console.WriteLine("\nThank you for using this program, you have quit out of it fully");
+    }
+}
